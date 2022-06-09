@@ -223,7 +223,7 @@ class Bahr:
     @property
     def all_shatr_combinations_patterns(self):
         return [
-            "".join((map(str, tafeela.pattern) for tafeela in shatr))
+            "".join(str(tafeela.pattern_int) for tafeela in shatr)
             for shatr in self.get_all_shatr_combinations(as_str_list=False)
         ]
 
