@@ -95,6 +95,15 @@ class Tafeela:
             forms.append(zehaf.modified_tafeela)
         return forms
 
+    def __hash__(self) -> int:
+        return hash(self.name + str(self.pattern_int))
+
+    def __eq__(self, other):
+        return self.pattern_int == other.pattern_int
+
+    def __ne__(self, __o: object) -> bool:
+        return not self.__eq__(__o)
+
     def __str__(self) -> str:
         return self.name
 
