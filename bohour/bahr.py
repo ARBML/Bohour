@@ -111,7 +111,7 @@ class Bahr:
         if self.sub_bahrs:
             for sub_bahr_class in self.sub_bahrs:
                 sub_bahr = sub_bahr_class()
-                combinations.extend(sub_bahr.all_combinations)
+                combinations.extend(sub_bahr.bait_combinations)
         return combinations
 
     @property
@@ -136,7 +136,7 @@ class Bahr:
         )
 
     @property
-    def all_combinations(self):
+    def bait_combinations(self):
         combinations = list()
         if self.only_one_shatr:
             return self._one_shatr_combinations
@@ -173,13 +173,15 @@ class Bahr:
         combinations.extend(self.sub_bahrs_combinations)
         # remove duplicates, if any
         # combinations = list(set(combinations))
-        combinations = list(dict.fromkeys(combinations)) # remove and maintain the order
+        combinations = list(
+            dict.fromkeys(combinations)
+        )  # remove and maintain the order
         return combinations
 
     @property
-    def all_combinations_patterns(self):
+    def all_baits_combinations_patterns(self):
         patterns = list()
-        for combination in self.all_combinations:
+        for combination in self.bait_combinations:
             pattern = ""
             if isinstance(combination[0], Tafeela):
                 shatr = combination
@@ -197,13 +199,41 @@ class Bahr:
             patterns.append(pattern)
         return patterns
 
+    def get_all_shatr_combinations(self, as_str_list=True):
+        combinations = list()
+        if self.only_one_shatr:
+            return self._one_shatr_combinations
+        for bait_combination in self.bait_combinations:
+            if isinstance(bait_combination[0], Tafeela):
+                """in the case bait only has one shatr"""
+                combinations.append(bait_combination)
+            else:
+                first_shatr, second_shatr = bait_combination
+                combinations.append(first_shatr)
+                combinations.append(second_shatr)
+        combinations = list(
+            dict.fromkeys(combinations)
+        )  # remove and maintain the order
+        if as_str_list:
+            return [
+                " ".join((str(tafeela) for tafeela in shatr)) for shatr in combinations
+            ]
+        return combinations
+
+    @property
+    def all_shatr_combinations_patterns(self):
+        return [
+            "".join((map(str, tafeela.pattern) for tafeela in shatr))
+            for shatr in self.get_all_shatr_combinations(as_str_list=False)
+        ]
+
     @property
     def max_pattern_length(self):
-        return len(max(self.all_combinations_patterns, key=len))
+        return len(max(self.all_baits_combinations_patterns, key=len))
 
     @property
     def min_pattern_length(self):
-        return len(min(self.all_combinations_patterns, key=len))
+        return len(min(self.all_baits_combinations_patterns, key=len))
 
 
 class Taweel(Bahr):
@@ -228,11 +258,11 @@ class Madeed(Bahr):
     }
 
     @property
-    def all_combinations(self):
+    def bait_combinations(self):
         """
         تطبيق المعاقبة: وذلك أنه لا يجوز اجتماع خبن فاعلن وكف فاعلاتن،
         """
-        combinations = super().all_combinations
+        combinations = super().bait_combinations
         filtered_combinations = list()
         for combination in combinations:
             first_shatr, second_shatr = combination
@@ -473,12 +503,12 @@ class Mudhare(Bahr):
     arod_dharbs_map = {NoZehafNorEllah: (NoZehafNorEllah,)}
 
     @property
-    def all_combinations(self):
+    def bait_combinations(self):
         """
         this bahr, unlike other bahrs, its hashaw should
         have zehaf!
         """
-        combinations = super().all_combinations
+        combinations = super().bait_combinations
         zehafed_combinations = list(
             filter(
                 lambda combination: combination[0][0].applied_ella_zehaf_class
