@@ -511,7 +511,7 @@ class Mujtath(Bahr):
     }
 
 
-class MutaqarebMajzoo(Bahr):
+class MutakarebMajzoo(Bahr):
     tafeelat = (Fawlon, Fawlon, Fawlon)
     arod_dharbs_map = {Hadhf: (Hadhf, Batr)}
     disallowed_zehafs_for_hashw = {
@@ -520,7 +520,7 @@ class MutaqarebMajzoo(Bahr):
     }
 
 
-class Mutaqareb(Bahr):
+class Mutakareb(Bahr):
     tafeelat = (Fawlon, Fawlon, Fawlon, Fawlon)
     arod_dharbs_map = {
         NoZehafNorEllah: (NoZehafNorEllah, Hadhf, Qataa, Batr),
@@ -531,7 +531,7 @@ class Mutaqareb(Bahr):
         0: ([], [Thalm, Tharm], [Thalm, Tharm]),
         1: ([Thalm, Tharm], [Thalm, Tharm], [Thalm, Tharm]),
     }
-    sub_bahrs = (MutaqarebMajzoo,)
+    sub_bahrs = (MutakarebMajzoo,)
 
 
 class MutadarakMashtoor(Bahr):

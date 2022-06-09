@@ -13,7 +13,7 @@ from .bahr import (
     Mujtath,
     Muqtadheb,
     Mudhare,
-    Mutaqareb,
+    Mutakareb,
     Mutadarak,
 )
 
@@ -32,6 +32,6 @@ bohours_list = [
     Mujtath,
     Muqtadheb,
     Mudhare,
-    Mutaqareb,
+    Mutakareb,
     Mutadarak,
 ]
