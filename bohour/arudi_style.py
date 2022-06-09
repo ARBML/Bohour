@@ -18,11 +18,13 @@ shadda_chars = ["\u0651"]
 all_chars = list("إةابتثجحخدذرزسشصضطظعغفقكلمنهويىأءئؤ ")
 prem_chars = harakat + sukun + mostly_saken + tnween_chars + shadda_chars + all_chars
 
+
 def handle_space(plain_chars):
     if plain_chars[-1] == " ":
         return plain_chars[:-2]
     else:
         return plain_chars[:-1]
+
 
 def remove_extra_harakat(pred):
     out = ""
@@ -132,7 +134,7 @@ def extract_tf3eelav3(pred, verbose=False):
         if j > 2 * len(chars):
             print(out, plain_chars)
             flag = False
-            raise Exception('error')
+            raise Exception("error")
 
     if out[-1] != "0":
         out += "0"  # always add sukun to the end of baits if mutaharek
@@ -174,18 +176,31 @@ def process_specials_before(bait):
 
     if bait[1] in all_chars:
         bait = bait[0] + harakat[1] + bait[1:]
-    return bait
+    out = []
+    i = 0
+    while i < len(bait):
+        if bait[i] == "ا" and bait[i - 1] in tnween_chars:
+            i += 1
+            continue
+        out += bait[i]
+        i += 1
+
+    return out
+
 
 def process_specials_after(bait):
     bait = bait.replace("ةن", "تن")
     # bait = bait.replace('ةي','تن')
     return bait
 
-def get_arudi_style(baits, verbose = False):
+
+def get_arudi_style(bait, verbose=False):
     results = []
-    for bait in baits:
-        bait = bait.strip()
+    bait = bait.strip()
+    if len(bait) > 0:
         preprocessed = process_specials_before(bait)
         arudi_style, pattern = extract_tf3eelav3(preprocessed, verbose=verbose)
         results.append([process_specials_after(arudi_style), pattern])
+    else:
+        results.append(["", ""])
     return results
