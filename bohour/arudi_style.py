@@ -181,6 +181,11 @@ def process_specials_before(bait):
     while i < len(bait):
         if bait[i] == "ا" and bait[i - 1] in tnween_chars:
             i += 1
+            if bait[i] in harakat + sukun + tnween_chars + shadda_chars:
+                """
+                remove the case when we have any tashkeel comes after tnween chars
+                """
+                i += 1
             continue
         out += bait[i]
         i += 1
