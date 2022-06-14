@@ -1,5 +1,6 @@
 import random
 import re
+from pyarabic.araby import strip_tashkeel
 
 harakat = ["\u0650", "\u064E", "\u064F"]  # [kasra, fatha, damma, ]
 sukun = ["\u0652"]  # [sukun]
@@ -17,7 +18,38 @@ tnween_chars = [
 shadda_chars = ["\u0651"]
 all_chars = list("إةابتثجحخدذرزسشصضطظعغفقكلمنهويىأءئؤ ")
 prem_chars = harakat + sukun + mostly_saken + tnween_chars + shadda_chars + all_chars
-
+CHANGE_LST = {
+    u"هذا": u"هَاذَا",
+    u"هذه": u"هَاذِه",
+    u"هذان": u"هَاذَان",
+    u"هذين": u"هَاذَين",
+    u"ذلك": u"ذَالِك",
+    u"ذلكما": u"ذَالِكُمَا",
+    u"ذلكم": u"ذَالِكُم",
+    u"الله": u"اللَّاه",
+    u"اللهم": u"اللَّاهُمّ",
+    u"إله": u"إِلَاه",
+    u"الإله": u"الإِلَاه",
+    u"إلهي": u"إِلَاهي",
+    u"إلهنا": u"إِلَاهنا",
+    u"إلهكم": u"إِلَاهكم",
+    u"إلههم": u"إِلَاههم",
+    u"إلههن": u"إِلَاههن",
+    u"رحمن": u"رَحمَان",
+    u"طاوس": u"طَاوُوس",
+    u"داود": u"دَاوُود",
+    u"لكنه":u"لَاكِنّهُ",
+  # u"لكن": u"ّلَاكِن",
+    # u"لكنني": u"لَاكِنَّنِي",
+    # u"لكنك": u"لَاكِنَّك",
+    # u"لكنه": u"لَاكِنَّه",
+    # u"لكنها": u"لَاكِنَّهَا",
+    # u"لكنهما": u"لَاكِنَّهُمَا",
+    # u"لكنهم": u"لَاكِنَّهُم",
+    # u"لكنهن": u"لَاكِنَّهُن",
+    u"أولئك": u"أُلَائِك",
+    u"أولئكم": u"أُلَائِكُم",
+}
 
 def handle_space(plain_chars):
     if plain_chars[-1] == " ":
@@ -174,6 +206,19 @@ def process_specials_before(bait):
     bait = bait.replace(" ال ", " الْ ")
     bait = bait.replace("ْ ال", "ِ ال")
 
+    out = []
+    for word in bait.split(" "):
+      cleaned_word = strip_tashkeel(word)
+      for key in CHANGE_LST:
+        if key in cleaned_word:
+          cleaned_word = cleaned_word.replace(key, CHANGE_LST[key])
+          out.append(cleaned_word)
+          break
+      else:
+        out.append(word)
+
+    bait = ' '.join(out)
+
     if bait[1] in all_chars:
         bait = bait[0] + harakat[1] + bait[1:]
     out = []
@@ -181,7 +226,7 @@ def process_specials_before(bait):
     while i < len(bait):
         if bait[i] == "ا" and bait[i - 1] in tnween_chars:
             i += 1
-            if bait[i] in harakat + sukun + tnween_chars + shadda_chars:
+            if i < len(bait) and bait[i] in harakat + sukun + tnween_chars + shadda_chars:
                 """
                 remove the case when we have any tashkeel comes after tnween chars
                 """
